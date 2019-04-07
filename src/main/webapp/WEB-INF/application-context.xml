@@ -18,10 +18,10 @@
 	<bean id="defaultDataSource"
 		class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName"
-			value="${db.driverClassName}" />
-		<property name="url" value="${db.url}" />
-		<property name="username" value="${db.username}" />
-		<property name="password" value="${db.password}" />
+			value="${db.openshift.driverClassName}" />
+		<property name="url" value="${db.openshift.url}" />
+		<property name="username" value="${db.openshift.username}" />
+		<property name="password" value="${db.openshift.password}" />
 	</bean>
 
 
@@ -30,7 +30,7 @@
 		<property name="dataSource" ref="defaultDataSource"></property>
 		<property name="hibernateProperties">
 			<props>
-				<prop key="hibernate.dialect">${hibernate.dialect}</prop>
+				<prop key="hibernate.dialect">${hibernate.mysql.dialect}</prop>
 				<prop key="hibernate.hbm2ddl.auto">update</prop>
 				<prop key="hibernate.show_sql">true</prop>
 			</props>

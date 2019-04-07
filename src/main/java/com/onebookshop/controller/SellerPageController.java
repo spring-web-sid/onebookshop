@@ -114,7 +114,7 @@ public class SellerPageController {
         if (!file.isEmpty()) {
             try {
                 byte[] bytes = file.getBytes();
-                String rootPath = PropertiesConfig.getPropertyValue("image.upload.dir"); //System.getProperty("catalina.home");
+                String rootPath = System.getProperty("catalina.home") + "/images";//PropertiesConfig.getPropertyValue("image.upload.dir"); //System.getProperty("catalina.home");
                 File dir = new File(rootPath);
                 if (!dir.exists())
                     dir.mkdirs();
