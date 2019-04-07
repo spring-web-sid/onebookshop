@@ -1,0 +1,60 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:mvc="http://www.springframework.org/schema/mvc"
+       xmlns:context="http://www.springframework.org/schema/context"
+       xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd">
+    <mvc:annotation-driven/>
+    <mvc:resources mapping="/resources/**" location="/resources/" />
+    <mvc:resources mapping="/images/**" location="file:///${image.upload.dir}" />
+
+    <context:component-scan base-package="com.onebookshop.controller"></context:component-scan>
+
+    <bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+        <property name="prefix" value="/WEB-INF/views/"/>
+        <property name="suffix" value=".jsp"/>
+    </bean>
+
+    <mvc:interceptors>
+        <ref bean="categoryUpdateInterceptor"/>
+        <ref bean="obsContextPathInterceptor"/>
+    </mvc:interceptors>
+
+    <bean id="obsContextPathInterceptor" class="com.onebookshop.interceptors.ObsContextPathInterceptor" />
+
+    <bean id="categoryUpdateInterceptor" class="com.onebookshop.interceptors.ObsCategoryUpdateInterceptor" depends-on="categoryMapper" />
+    <bean id="categoryMapper" class="com.onebookshop.util.CategoryCategoryMapper" depends-on="environment" />
+    <bean id="multipartResolver" class="org.springframework.web.multipart.commons.CommonsMultipartResolver">
+        <property name="maxUploadSize" value="1048576" />
+    </bean>
+
+	<!-- <bean id="validator" class="org.springframework.validation.beanvalidation.LocalValidatorFactoryBean" >
+        <property name="validationMessageSource" ref="messageSource"/>
+    </bean> -->
+    <bean id="messageSource"
+		class="org.springframework.context.support.ReloadableResourceBundleMessageSource">
+		<property name="basename" value="classpath:message" />
+		<property name="defaultEncoding" value="UTF-8" />
+	</bean>
+
+	<!-- <bean id="numberOnlyValidator" class="com.onebookshop.validation.NumberOnlyValidator" /> -->
+    <!-- <bean id="localeResolver" class="org.springframework.web.servlet.i18n.CookieLocaleResolver">
+        <property name="defaultLocale" value="en"/>
+    </bean>
+    <bean id="changeInterceptor" class="org.springframework.web.servlet.i18n.LocaleChangeInterceptor">
+        <property name="paramName" value="locale"/>
+    </bean> -->
+    
+    <bean id="themeSource" class="org.springframework.ui.context.support.ResourceBundleThemeSource" />
+    
+    <bean id="themeResolver" class="org.springframework.web.servlet.theme.FixedThemeResolver">
+    	<property name="defaultThemeName" value="message" />
+    </bean>
+
+    <bean id="categoryUrlResolver" class="com.onebookshop.resolver.CategoryUrlResolver" />
+
+   <!-- <bean id="bookImageUrlResolver" class="com.onebookshop.resolver.BookImageUrlResolver" />-->
+</beans>
+

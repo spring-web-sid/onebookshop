@@ -1,0 +1,104 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5"
+         xmlns="http://java.sun.com/xml/ns/javaee"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+
+    <display-name>Archetype Created Web Application</display-name>
+
+    <filter>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>springSecurityFilterChain</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+
+    <filter>
+        <filter-name>homePageRedirectFilter</filter-name>
+        <filter-class>com.onebookshop.filter.HomePageRedirectionFilter</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>homePageRedirectFilter</filter-name>
+        <url-pattern>/*</url-pattern>
+    </filter-mapping>
+    <filter>
+        <description>Spring based filters</description>
+        <filter-name>oneBookShopFilterChain</filter-name>
+        <filter-class>org.springframework.web.filter.DelegatingFilterProxy</filter-class>
+    </filter>
+    <filter-mapping>
+        <filter-name>oneBookShopFilterChain</filter-name>
+        <servlet-name>DispatcherServlet</servlet-name>
+    </filter-mapping>
+    <!-- Start of listeners -->
+    <listener>
+        <description>
+            The RequestContextListener exposes the 'request' scope to the context.
+            Furthermore it is needed when overriding the 'jalosession' bean for your web application.
+        </description>
+        <listener-class>org.springframework.web.context.request.RequestContextListener</listener-class>
+    </listener>
+
+    <listener>
+        <description>
+            HttpSessionListener that automatically exposes the session mutex when an HttpSession gets created.
+            The session mutex is guaranteed to be the same object during the entire lifetime of the session.
+            It serves as a safe reference to synchronize on for locking on the current session.
+        </description>
+        <listener-class>org.springframework.web.util.HttpSessionMutexListener</listener-class>
+    </listener>
+
+    <!-- Bootstraps the root web application context before servlet initialization -->
+    <listener>
+        <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+    </listener>
+
+    <!-- needed for ContextLoaderListener -->
+    <context-param>
+        <param-name>contextConfigLocation</param-name>
+        <param-value>/WEB-INF/web-application-config.xml</param-value>
+    </context-param>
+
+    <!-- End of listeners -->
+
+
+    <servlet>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <servlet-class>
+            org.springframework.web.servlet.DispatcherServlet
+        </servlet-class>
+        <init-param>
+            <param-name>contextConfigLocation</param-name>
+            <param-value>/WEB-INF/spring-mvc-config.xml, /WEB-INF/spring-security-config.xml</param-value>
+        </init-param>
+        <load-on-startup>1</load-on-startup>
+    </servlet>
+
+    <servlet-mapping>
+        <servlet-name>DispatcherServlet</servlet-name>
+        <url-pattern>/</url-pattern>
+    </servlet-mapping>
+
+    <error-page>
+        <error-code>403</error-code>
+        <location>/error/403/error.html</location>
+    </error-page>
+    <error-page>
+        <error-code>404</error-code>
+        <location>/error/404/error.html</location>
+    </error-page>
+    <error-page>
+        <error-code>500</error-code>
+        <location>/error/500/error.html</location>
+    </error-page>
+
+    <session-config>
+        <!-- Session timeout of 30 minutes -->
+        <session-timeout>30</session-timeout>
+        <!--  Use secure flag on cookies -->
+    </session-config>
+
+</web-app>

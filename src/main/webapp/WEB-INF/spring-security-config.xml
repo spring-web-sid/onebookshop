@@ -1,0 +1,82 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns="http://www.springframework.org/schema/beans"
+	xmlns:security="http://www.springframework.org/schema/security"
+	xsi:schemaLocation="http://www.springframework.org/schema/security http://www.springframework.org/schema/security/spring-security-3.2.xsd
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd">
+
+	<import resource="application-context.xml" />
+
+	<security:http pattern="/guest/**" auto-config="true" use-expressions="true">
+		<security:anonymous enabled="true" />
+	</security:http>
+
+	<bean id="loginUserAuthenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<constructor-arg name="loginFormUrl"
+			value="/loginUser" />
+	</bean>
+
+	<security:http auto-config="true" use-expressions="true"
+		pattern="/user/**" entry-point-ref="loginUserAuthenticationEntryPoint">
+
+		<security:intercept-url pattern="/**"
+			access="hasRole('ROLE_USER')" />
+
+		<security:form-login
+			authentication-failure-url="/loginUser?error"
+			username-parameter="j_username" password-parameter="j_password"
+			login-processing-url="/user/j_spring_security_check"
+			authentication-success-handler-ref="obsAuthenticationSuccessHandler"/>
+
+		<security:logout logout-success-url="/loginUser?logout"
+			logout-url="/user/j_spring_security_logout"
+			delete-cookies="JSESSIONID" invalidate-session="true"/>
+	</security:http>
+
+	<bean id="loginSellerAuthenticationEntryPoint"
+		class="org.springframework.security.web.authentication.LoginUrlAuthenticationEntryPoint">
+		<constructor-arg name="loginFormUrl"
+			value="/loginSeller" />
+	</bean>
+	<security:http auto-config="true" use-expressions="true"
+		pattern="/seller/**"
+		entry-point-ref="loginSellerAuthenticationEntryPoint">
+
+		<security:intercept-url pattern="/**"
+			access="hasRole('ROLE_SELLER')" />
+
+		<security:form-login default-target-url="/seller/welcome"
+							 always-use-default-target="true"
+							 authentication-failure-url="/loginSeller?error"
+							 username-parameter="j_username" password-parameter="j_password"
+							 login-processing-url="/seller/j_spring_security_check" />
+
+		<security:logout logout-success-url="/loginSeller?logout"
+			logout-url="/seller/j_spring_security_logout"
+			delete-cookies="JSESSIONID" invalidate-session="true"/>
+
+	</security:http>
+
+	<!-- Select users and user_roles from database -->
+	<security:authentication-manager
+		erase-credentials="true">
+		<security:authentication-provider
+			user-service-ref="obsUserService">
+			<security:password-encoder ref="encoder" />
+		</security:authentication-provider>
+	</security:authentication-manager>
+
+	<bean id="encoder"
+		class="org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder">
+		<constructor-arg name="strength" value="10" />
+	</bean>
+
+	<bean id="obsUserService"
+		class="com.onebookshop.service.impl.ObsUserService" />
+	<bean id="obsAuthenticationSuccessHandler" class="com.onebookshop.security.ObsAuthenticationSuccessHandler">
+		<constructor-arg value="/user/welcome" />
+		<property name="userService" ref="userService" />
+ 		<property name="cartService" ref="cartService" />
+	</bean>
+</beans>
